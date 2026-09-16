@@ -29,6 +29,7 @@ jobs:
           aws lambda invoke \
             --function-name csvtoparquet \
             --payload '{}' \
+            --region us-east-1 \
             response.json
 
       - name: Display Lambda Response
