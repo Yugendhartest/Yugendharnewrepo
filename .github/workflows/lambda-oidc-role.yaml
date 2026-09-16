@@ -1,0 +1,36 @@
+name: Run Lambda Using OIDC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  invoke-lambda:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::721274598429:role/Gitactionrole
+          role-session-name: GitHubActions
+          aws-region: ap-south-1
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+
+      - name: Invoke Lambda
+        run: |
+          aws lambda invoke \
+            --function-name csvtoparquet \
+            --payload '{}' \
+            response.json
+
+      - name: Display Lambda Response
+        run: |
+          cat response.json
